@@ -21,66 +21,57 @@ export default function Stepperform() {
     setFormData((prev) => ({ ...prev, ...stepData }));
   };
 
-  const handleNext = async () => {
-    if (activeStep === steps.length - 1) {
-      // Final step - prepare data
-      console.log("Submitting formData:", formData);
+const handleNext = async () => {
+  if (activeStep === steps.length - 1) {
+    console.log("Submitting formData:", formData);
 
-      const entry = {
-        srno: Date.now(),
-        name: formData.name,
-        email: formData.email,
-        phoneno: formData.phoneno,
-        gender: formData.gender,
-        // You can store more info locally if needed
-      };
-
-      // Save to localStorage for list display
-      const existing = JSON.parse(localStorage.getItem("formList") || "[]");
-      localStorage.setItem("formList", JSON.stringify([...existing, entry]));
-
-      // 🔥 Register via API
-      try {
-        const token = localStorage.getItem("token");
-
-        const res = await fetch(
-          "https://reactinterviewtask.codetentaclestechnologies.in/api/api/register",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              email: formData.email,
-              password: formData.password,
-              c_password: formData.c_password,
-              role: "user",
-            }),
-          }
-        );
-
-        const result = await res.json();
-        console.log("📨 Status Code:", res.status);
-        console.log("📨 Response Body:", result);
-
-        if (!res.ok) {
-          alert(result.message || "Registration failed");
-          console.log("Failed Registration Payload:", {
-            email: formData.email,
-            password: formData.password,
-            c_password: formData.c_password,
-          });
-          return;
-        }
-
-        console.log("Registered user:", result);
-      } catch (error) {
-        console.error("Registration error:", error);
-        alert("Network error while registering");
-        return;
-      }
+    if (formData.password !== formData.c_password) {
+      alert("Passwords do not match");
+      return;
     }
 
-    setActiveStep((prev) => prev + 1);
-  };
+    const entry = {
+      srno: Date.now(),
+      name: formData.name,
+      email: formData.email,
+      phoneno: formData.phoneno,
+      gender: formData.gender,
+      // store other info as needed
+    };
+
+    // Save to localStorage
+    const existing = JSON.parse(localStorage.getItem("formList") || "[]");
+    localStorage.setItem("formList", JSON.stringify([...existing, entry]));
+
+    // API Register Call
+   try {
+  const res = await fetch("https://reactinterviewtask.codetentaclestechnologies.in/api/api/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email: formData.email,
+      password: formData.password,
+      c_password: formData.c_password
+    }),
+  });
+
+  const result = await res.json();
+  console.log(" Registration response:", result);
+
+  if (!res.ok || result.success === false) {
+    alert(result.message || "Registration failed");
+    return;
+  }
+
+} catch (error) {
+  console.error(" Registration error:", error);
+  alert("Network error");
+}
+
+  }
+  setActiveStep((prev) => prev + 1);
+};
+
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);

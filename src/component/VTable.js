@@ -196,7 +196,7 @@ const Table = ({
                     className="m-auto"
                     style={{ width: "150px" }}
                   />
-                  {/* <p className='px-6 py-3  text-xs font-medium text-gray-500 uppercase tracking-wider' >Data Not Found</p> */}
+                  <p className='px-6 py-3  text-xs font-medium text-gray-500 uppercase tracking-wider' >Data Not Found</p>
                 </div>
               </td>
             </tr>
